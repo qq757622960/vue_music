@@ -36,7 +36,6 @@
                 getRecommend().then((res) => {
                     if (res.code === ERR_OK) {
                         this.recommends = res.data.slider
-                        console.log(res.data.slider);
                     }
                 })
             }
@@ -55,7 +54,7 @@
     //   height: 100%
       overflow: hidden
       .slider-wrapper
-        // position: relative
+        position: relative
         // width: 100%
         // height: 0
         // padding-top: 40%

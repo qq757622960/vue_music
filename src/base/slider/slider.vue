@@ -3,7 +3,9 @@
         <div class="slider-group" ref="sliderGroup">
             <slot></slot>
         </div>
-        <div class="dots"></div>
+        <div class="dots">
+            <span class="dot" :class="{ active: currentPageIndex === index }" v-for="(item, index) in dots" :key="index"></span>
+        </div>
     </div>
 </template>
 
@@ -12,6 +14,12 @@
     import BScroll from 'better-scroll'
 
     export default {
+        data() {
+            return {
+                dots: [],
+                currentPageIndex: 0
+            }
+        },
         props: {
             loop: {
                 type: Boolean,
@@ -29,11 +37,23 @@
         mounted() {
             setTimeout(() => {
                 this._setSliderWidth()
+                this._initDots()
                 this._initSlider()
-            }, 20);
+
+                if (this.autoPlay) {
+                    this._play()
+                }
+            }, 20)
+
+            // 窗口缩放
+            window.addEventListener('resize', () => {
+                if (!this.slider) { return }
+                this._setSliderWidth(true)
+                this.slider.refresh()
+            })
         },
         methods: {
-            _setSliderWidth() {
+            _setSliderWidth(isResize) {
                 this.children = this.$refs.sliderGroup.children
 
                 let width = 0
@@ -45,7 +65,7 @@
                     child.style.width = sliderWidth + 'px'
                     width += sliderWidth
                 }
-                if (this.loop) {
+                if (this.loop && !isResize) {
                     width += 2 * sliderWidth
                 }
                 this.$refs.sliderGroup.style.width = width + 'px'
@@ -59,8 +79,27 @@
                         loop: this.loop,
                         threshold: 0.3,
                         speed: 400
+                    },
+                    click: true
+                })
+
+                this.slider.on('scrollEnd', () => {
+                    let pageIndex = this.slider.getCurrentPage().pageX
+                    this.currentPageIndex = pageIndex
+                    // 第一个结束了, 继续调用播放
+                    if (this.autoPlay) {
+                        this._play();
                     }
                 })
+            },
+            _initDots() {
+                this.dots = new Array(this.children.length)
+            },
+            _play() {
+                clearTimeout(this.timer)
+                this.timer = setTimeout(() => {
+                    this.slider.next()
+                }, this.interval);
             }
         }
     }; 
