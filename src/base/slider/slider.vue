@@ -101,7 +101,10 @@
                     this.slider.next()
                 }, this.interval);
             }
-        }
+        },
+        destroyed() {
+            clearTimeout(this.timer)
+        },
     }; 
 </script>
 
@@ -146,4 +149,5 @@
           width: 20px
           border-radius: 5px
           background: $color-text-ll
+
 </style>
