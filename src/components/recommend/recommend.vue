@@ -1,85 +1,26 @@
 <template>
     <div class="recommend" ref="recommend">
-        <scroll ref="scroll" class="recommend-content">
-            <div>
-                <div v-if="recommends.length" class="slider-wrapper">
-                    <div class="slider-content">
-                        <slider>
-                            <div v-for="item in recommends" :key="item.id">
-                                <a :href="item.linkUrl">
-                                    <img :src="item.picUrl" @load="loadImage" class="needsclick" />
-                                </a>
-                            </div>
-                        </slider>
-                    </div>
-                </div>
-                
-                <div class="recommend-list">
-                    <h1 class="list-title">热门歌单推荐</h1>
-                    <ul>
-                        <li v-for="item in discList" :key="item.dissid" class="item">
-                            <div class="icon">
-                                <img v-lazy="item.imgurl" width="60" height="60" alt="">
-                            </div>
-                            <div class="text">
-                                <h2 class="name" v-text="item.creator.name"></h2>
-                                <p class="desc" v-text="item.dissname"></p>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="loading-container">
-                <loading v-show="!discList.length"></loading>
-            </div>
-        </scroll>
+        recommend
     </div>
 </template>
 
 <script type="text/ecmascript-6">
-    import Slider from 'base/slider/slider'
-    import Scroll from 'base/scroll/scroll'
-    import Loading from 'base/loading/loading'
-    import {getRecommend, getDiscList} from 'api/recommend'
-    import {ERR_OK} from 'api/config'
-
+    import { getRecommend, getSliderList } from 'api/recommend'
     export default {
         data() {
             return {
-                recommends: [],
-                discList: []
+                
             }
         },
         components: {
-            Slider,
-            Scroll,
-            Loading
         },
         created() {
-            this._getRecommend()     
-            this._getDiscList()
+            this._getSliderList()
         },
         methods: {
-            _getRecommend() {
-                getRecommend().then((res) => {
-                    if (res.code === ERR_OK) {
-                        this.recommends = res.data.slider
-                    }
+            _getSliderList() {
+                getSliderList().then((res) => {
                 })
-            },
-            _getDiscList() {
-                getDiscList().then((res) => {
-                    if (res.code === ERR_OK) {
-                        this.discList = res.data.list
-                    }
-                })
-            },
-            loadImage() {
-                // 重点, 加载一次图片方案
-                if (!this.checkLoaded) {
-                    this.$refs.scroll.refresh()    
-                    this.checkLoaded = true
-                }
             }
         }
     };

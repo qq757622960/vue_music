@@ -27,8 +27,24 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     before(app) {
       app.use(bodyParser.urlencoded({ extended: true }))
       const querystring = require('querystring')
+      // 歌手列表
       app.get('/api/getDiscList', function (req, res) {
         const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((e) => {
+          console.log(e)
+        })
+      })
+      // 获取轮播图
+      app.get('/api/getSliderList', function (req, res) {
+        const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
         axios.get(url, {
           headers: {
             referer: 'https://c.y.qq.com/',

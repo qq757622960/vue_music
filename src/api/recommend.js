@@ -2,17 +2,37 @@ import jsonp from "common/js/jsonp"
 import { commonParams, options } from './config'
 import axios from 'axios'
 
-
 export function getRecommend() {
-    const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
-
-    const data = Object.assign({}, commonParams, {
+    let data = Object.assign({}, commonParams, {
         platform: 'h5',
-        uin: 0,
-        needNewCode: 1
+        uin: '0',
+        needNewCode: '1'
     })
 
+    let url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
+
     return jsonp(url, data, options)
+}
+
+export function getSliderList() {
+    const url = '/api/getSliderList'
+    
+    const data = Object.assign({}, commonParams, {
+        platform: 'h5',
+        uin: '0',
+        needNewCode: '1',
+        format: 'json',
+        rnd: Math.random()
+    })
+
+    return axios.get(url, {
+        params: data,
+        transformResponse: [function(res) {
+            return JSON.parse(res)
+        }]
+    }).then((res) => {
+        return Promise.resolve(res)
+    })
 }
 
 export function getDiscList() {

@@ -11,3 +11,7 @@ export function hasClass(el, className) {
 export function addClass(el, className) {
     el.classList.add(className)
 }
+
+export function getData(el, name, val) {
+    return val ? el.dataset[name] = val : el.dataset[name]
+}
