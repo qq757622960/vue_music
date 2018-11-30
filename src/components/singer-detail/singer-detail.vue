@@ -2,12 +2,23 @@
     <transition name="slide">
         <div class="singer-detail">
             singer-detail
+            <button>点击我</button>
         </div>
     </transition>
 </template>
 
 <script type="text/ecmascript-6">
-    export default {}
+    import { mapGetters } from 'vuex'
+
+    export default {
+        computed: {
+            ...mapGetters(['singer'])
+        },
+        methods: {},
+        created() {
+            console.log(this.singer)
+        }
+    }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
