@@ -1,27 +1,114 @@
 <template>
-    <div>slider</div>
+    <div class="slider" ref="slider">
+        <div class="slider-group" ref="sliderGroup">
+            <slot></slot>
+        </div>
+        <div class="dots">
+            <span 
+                v-for="(item, index) in dots" 
+                :key="index"
+                :class="{active: currentPageIndex == index}" 
+                class="dot">
+            </span>
+        </div>
+    </div>
 </template>
 
 <script>
-    import { hasClass, addClass } from 'common/js/dom'
+    import { addClass } from 'common/js/dom'
     import BScroll from 'better-scroll'
 
     export default {
         data() {
             return {
-                
+                dots: [],
+                currentPageIndex: 0
             }
         },
         props: {
-            
+            loop: {
+                type: Boolean,
+                default: true
+            },
+            autoPlay: {
+                type: Boolean,
+                default: true
+            },
+            interval: {
+                type: Number,
+                default: 4000
+            }
         },
         mounted() {
-            
+            setTimeout(() => {
+                this._setSliderWidth()
+                this._initDots()
+                this._initSlider()
+
+                if (this.autoPlay) {
+                    this._play()
+                }
+            }, 20)
+
+            window.addEventListener('resize', () => {
+                if (!this.scroll) {
+                    return
+                }
+                this._setSliderWidth(true)
+                this.scroll.refresh()
+            }, false)
         },
         methods: {
-            
+            _setSliderWidth(isResize) {
+                this.children = this.$refs.sliderGroup.children
+                let sliderWidth = this.$refs.slider.clientWidth
+                let width = 0
+
+                for (var i = 0, len = this.children.length; i < len; i++) {
+                    let child = this.children[i]
+                    addClass(child, 'slider-item')
+                    child.style.width = sliderWidth + 'px'
+                    width += sliderWidth
+                }
+
+                if (this.loop && !isResize) {
+                    width += 2 * sliderWidth
+                }
+                this.$refs.sliderGroup.style.width = width + 'px'
+            },
+            _initSlider() {
+                this.scroll = new BScroll(this.$refs.slider, {
+                    scrollX: true,
+                    scrollY: false,
+                    momentum: false,
+                    snap: {
+                        loop: this.loop,
+                        threshold: 0.3,
+                        speed: 400
+                    }
+                })
+
+                this.scroll.on('scrollEnd', () => {
+                    let pageIndex = this.scroll.getCurrentPage().pageX
+                    this.currentPageIndex = pageIndex
+                    if (this.autoPlay) {
+                        clearTimeout(this.timer)
+                        this._play()
+                    }
+                })
+            },
+            _initDots() {
+                this.dots = new Array(this.children.length)
+            },
+            _play() {
+                this.timer = setTimeout(() => {
+                    this.scroll.next()
+                }, this.interval)
+            }
         },
         destroyed() {
+            this.timer = null
+            this.scroll = null
         },
     }; 
 </script>
@@ -30,6 +117,7 @@
     @import "~common/stylus/variable"
 
     .slider
+        position relative
         min-height: 1px
     .slider-group
       position: relative

@@ -20,9 +20,7 @@ export function getSliderList() {
     const data = Object.assign({}, commonParams, {
         platform: 'h5',
         uin: '0',
-        needNewCode: '1',
-        format: 'json',
-        rnd: Math.random()
+        needNewCode: '1'
     })
 
     return axios.get(url, {
@@ -31,7 +29,7 @@ export function getSliderList() {
             return JSON.parse(res)
         }]
     }).then((res) => {
-        return Promise.resolve(res)
+        return Promise.resolve(res.data)
     })
 }
 
