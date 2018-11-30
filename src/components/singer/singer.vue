@@ -11,6 +11,7 @@
     import {ERR_OK} from 'api/config'
     import Singer from 'common/js/Singer'
     import ListView from 'base/listview/listview'
+
     import {mapMutations} from 'vuex'
 
     const HOT_NAME = '热门'
