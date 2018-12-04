@@ -9,7 +9,7 @@
 
 <script type="text/ecmascript-6">
     import { getSingerDetail } from 'api/singer'
-    import {createSong} from 'common/js/song'
+    import {createSong, isValidMusic, processSongsUrl} from 'common/js/song'
     import { ERR_OK } from 'api/config'
 
     import { mapGetters } from 'vuex'
@@ -17,7 +17,7 @@
     export default {
         data() {
             return {
-                song: []
+                songs: []
             }
         },
         computed: {
@@ -33,18 +33,23 @@
                 }
                 getSingerDetail(this.singer.id).then((res) => {
                     if (res.code === ERR_OK) {
-                        this.song = this._normalizeSong(res.data.list)
+                        this.songs = this._normalizeSongs(res.data.list)
+                        processSongsUrl(this._normalizeSongs(res.data.list)).then((songs) => {
+                            this.songs = songs
+                        })
                         // console.log(this.song)
                     }
                 })
             },
-            _normalizeSong(list) {
+            _normalizeSongs(list) {
                 let songsList = []
                 list.forEach((item) => {
                     let {musicData} = item
-                    songsList.push(createSong(musicData))
+                    if (musicData.songid && musicData.albumid) {
+                        songsList.push(createSong(musicData))    
+                    }
                 }) 
-
+                console.log(songsList);
                 return songsList
             },
 
