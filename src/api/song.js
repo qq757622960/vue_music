@@ -23,7 +23,7 @@ export function getSongsUrl(songs) {
         uin: 0
     })
 
-    axios.post(url, {
+    return axios.post(url, {
         comm: data,
         url_mid: genUrlMid(mids, types)
     })

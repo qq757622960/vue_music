@@ -74,12 +74,14 @@
                 })
             },
             loadImage() {
+                // 任何时候给一个对象添加属性
                 if (!this.checkLoaded) {
                     this.$refs.scroll.refresh()
                     this.checkLoaded = true    
                 }
             }
-        }
+        },
+        destroyed() {}
     };
 </script>
 

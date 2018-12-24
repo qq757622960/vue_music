@@ -60,6 +60,7 @@
         },
         methods: {
             _setSliderWidth(isResize) {
+                // 任何时候给一个对象添加属性
                 this.children = this.$refs.sliderGroup.children
                 let sliderWidth = this.$refs.slider.clientWidth
                 let width = 0
@@ -109,6 +110,8 @@
         destroyed() {
             this.timer = null
             this.scroll = null
+            this.dots = null
+            this.children = null
         },
     }; 
 </script>

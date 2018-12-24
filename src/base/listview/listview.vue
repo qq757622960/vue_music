@@ -98,6 +98,7 @@
                 this.scrollY = pos.y
             },
             selectItem(item) {
+                // this.trigger('select', item)
                 this.$emit('select', item)
             },
             _calculateHeight() {
