@@ -1,6 +1,11 @@
 <template>
     <div class="player" v-show="playlist.length > 0">
-        <transition name="normal">
+        <transition 
+            name="normal"
+            @enter="enter"
+            @after-enter="afterEnter"
+            @leave="leave"
+            @after-leave="afterLeave">
             <div class="normal-player" v-show="fullScreen">
                 <div class="background">
                     <img width="100%" height="100%" :src="currentSong.image">
@@ -63,7 +68,10 @@
 
 <script type="text/ecmascript-6">
     import { mapGetters, mapMutations } from 'vuex'
-
+    import animations from 'create-keyframe-animation'
+    import {prefixStyle} from 'common/js/dom'
+    
+    const transform = prefixStyle('transform')
     export default {
         data() {
             return {}
@@ -84,10 +92,90 @@
             },
             open() {
                 this.setFullScreen(true)
+            },
+            enter(el, done) {
+                const {x, y, scale} = this._getPosAndScale()
+                console.log(x, y, scale);
+
+                let animation = {
+                    0: {
+                        transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+                    },
+                    60: {
+                        transform: `translate3d(0, 0, 0) scale(1.1)`
+                    },
+                    100: {
+                        transform: `translate3d(0, 0, 0) scale(1)`
+                    }
+                }
+
+                animations.registerAnimation({
+                    name: 'move',
+                    animation,
+                    presets: {
+                        duration: 400,
+                        easing: 'linear'
+                    }
+                })     
+                
+                animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+            },
+            afterEnter() {
+                animations.unregisterAnimation('move')
+                this.$refs.cdWrapper.style.animation = ''
+            },
+            leave(el, done) {
+                const {x, y, scale} = this._getPosAndScale()
+                this.$refs.cdWrapper.style.transition = 'all 0.4s'
+                this.$refs.cdWrapper.style[transform] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+                const timer = setTimeout(done, 400)
+                this.$refs.cdWrapper.addEventListener('transitionend', () => {
+                clearTimeout(timer)
+                    done()
+                })
+            },
+            afterLeave() {
+                this.$refs.cdWrapper.style.transition = ''
+                this.$refs.cdWrapper.style[transform] = ''
+            },
+            _getPosAndScale() {
+                // x轴: 屏幕宽度 / 2 - 40
+                // y轴: 屏幕高度 - 头部高度 - 底部/2 - CD高度/2
+                // scale: 小CD宽度/大CD宽度
+                const x = -(window.innerWidth / 2 - 40)
+                const y = window.innerHeight - 80 - (60 / 2) - (window.innerWidth * 0.8 / 2)
+                const scale = 40 / (window.innerWidth * 0.8)
+
+                return {
+                    x,
+                    y,
+                    scale
+                }
+                // const targetWidth = 40
+                // const paddingLeft = 40
+                // const paddingBottom = 30
+                // const paddingTop = 80
+                // const width = window.innerWidth * 0.8
+                // const scale = targetWidth / width
+                // const x = -(window.innerWidth / 2 - paddingLeft)
+                // const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+                // return {
+                //     x,
+                //     y,
+                //     scale
+                // }
+
             }
         },
         components: {},
-        created() {},
+        created() {
+            // console.log(animations)
+            // getAnimationCSS: ƒ (name, positions)
+            // hasAnimation: ƒ (name)
+            // registerAnimation: ƒ (opts)
+            // runAnimation: ƒ ()
+            // unregisterAnimation: ƒ (name)
+        },
         mounted() {}
     }
 </script>
