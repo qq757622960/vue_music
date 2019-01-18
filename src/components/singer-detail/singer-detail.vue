@@ -10,7 +10,6 @@
     import { ERR_OK } from 'api/config'
     import { mapGetters } from 'vuex'
     import MusicList from 'components/music-list/music-list'
-    
 
     export default {
         data() {

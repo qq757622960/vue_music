@@ -20,6 +20,37 @@ npm run build --report
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
 
+> 日志
+2019.1.4
+1. 解决歌曲快速点击播放报错问题
+<video @canplay="ready" />
+
+data() {
+    return {
+        songReady: false
+    }
+},
+methods: {
+    ready() {
+        this.songReady = true
+    },
+    next() {
+        // 如果没有准备好, 就返回, 不执行下面的操作
+        if (!this.songReady) { return; }
+        // ...
+        this.songReady = false
+    }
+}
+
+2. 解决快速点击, 当 canready 还没有准备好的时候, 禁用按钮
+computed: {
+    disableCls: function() {
+        return this.songReady ? '' : 'disable'
+    }
+}
+
+3. getSongsUrl() 接口获取歌曲数据, 有时候特么慢。最后定位到 processSongsUrl() 获取接口数据的时候特别慢。
+
 
 > 知识点
 
@@ -157,5 +188,5 @@ computed: {
 
 > 心得
 
-* 快速切换到另一个项目的方法, 从简单的一个函数开始, 慢慢上手, 不要等待
+* 快速切换到另一个项目的方法, 从简单的一个函数开始, 慢慢上手, 不要等待, 后来感觉, 需要把心静下来, 做什么都可以。
 * 遇到一个新技术, 一般采用3W方法, 1.此技术是什么->2.它能解决什么问题->3.它怎么用

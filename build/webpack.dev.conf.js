@@ -44,6 +44,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       })
 
       app.post('/api/getPurlUrl', bodyParser.json(), function (req, res) {
+        console.log('/api/getPurlUrl');
         const url = 'https://u.y.qq.com/cgi-bin/musicu.fcg'
         axios.post(url, req.body, {
           headers: {
