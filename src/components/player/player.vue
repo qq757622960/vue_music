@@ -202,6 +202,8 @@
                 }
                 const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
                 const width = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+                // const width = left + deltaX
+                console.log(width)
                 this.$refs.lyricList.$el.style[transform] = `translate3d(${width}px, 0, 0)`
             },
             middleTouchend() {
